@@ -1,0 +1,22 @@
+# Editor files
+.idea/
+.vscode/
+
+# Dependency directories
+node_modules/
+
+# Environment configuration files
+.env
+
+# Dependency lock files
+yarn.lock
+package-lock.json
+
+build/
+tmp/
+temp/
+
+
+
+
+
