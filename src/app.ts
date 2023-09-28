@@ -10,6 +10,7 @@ import e from "express";
 
 //import redisClient from './utils/connectRedis';
 
+const session = require("express-session")
 
 AppDataSource.initialize()
   .then(async () => {
@@ -19,15 +20,15 @@ AppDataSource.initialize()
     const app = express();
 
     // MIDDLEWARE
-    const session = require("express-session")
+    app.use(bodyParser.json())
+
     app.use(session({
-      secret: 'your-secret-key',
+      secret: 'anyRandomString',
       resave: false,
-      saveUninitialized: true,
+      saveUninitialized: false,
     }));
 
     // 1. Body parser
-    app.use(bodyParser.json())
     
     // 2. Logger
     
@@ -39,6 +40,15 @@ AppDataSource.initialize()
     // ROUTES
     app.use('/api/', router)
     
+    app.post('/testSession', (req, res) => {
+      const {email, password} = req.body
+      if (email && password){
+        console.log(req.session)
+        res.send('ok')
+    }
+    else res.send('not ok :/')
+    })
+
     // HEALTH CHECKER
     app.get("/api/healthchecker", async (_, res: Response) => {
       const message = "here we go";

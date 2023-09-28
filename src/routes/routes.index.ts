@@ -1,6 +1,6 @@
 import { Request, Response, Router } from "express";
-import { UserLoginRoute } from "./dashboards/login.route";
-import { DashboardRoute } from "./dashboards/dashboard.route";
+import { UserLoginRoute } from "./login/login.route";
+import { DashboardRoute } from "./dashboard/dashboard.route";
 const router = Router();
 
 router.use("/", UserLoginRoute)

@@ -11,7 +11,11 @@ export async function userLoginController(req: Request, res: Response) {
   //validate form?
   
   //login logic
-  
+    if (email && password){
+        console.log(session)
+    }
+
+
   //check if email is registered
   
   //check if password is correct
