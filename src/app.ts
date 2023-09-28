@@ -6,7 +6,10 @@ import { AppDataSource } from "./utils/data-source";
 import bodyParser from "body-parser";
 import cors from "cors";
 import router from "./routes/routes.index";
+import e from "express";
+
 //import redisClient from './utils/connectRedis';
+
 
 AppDataSource.initialize()
   .then(async () => {
@@ -14,20 +17,28 @@ AppDataSource.initialize()
     validateEnv();
 
     const app = express();
-    app.use('/api/', router)
+
     // MIDDLEWARE
-    app.use(bodyParser.json())
+    const session = require("express-session")
+    app.use(session({
+      secret: 'your-secret-key',
+      resave: false,
+      saveUninitialized: true,
+    }));
 
     // 1. Body parser
-
+    app.use(bodyParser.json())
+    
     // 2. Logger
-
+    
     // 3. Cookie Parser
-
+    
     // 4. Cors
     //app.use(cors)
-    // ROUTES
 
+    // ROUTES
+    app.use('/api/', router)
+    
     // HEALTH CHECKER
     app.get("/api/healthchecker", async (_, res: Response) => {
       const message = "here we go";
