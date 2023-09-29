@@ -1,5 +1,5 @@
 require("dotenv").config();
-import express, { Response } from "express";
+import express, { Request, Response } from "express";
 import config from "config";
 import validateEnv from "./utils/validateEnv";
 import { AppDataSource } from "./utils/data-source";
@@ -11,6 +11,8 @@ import e from "express";
 //import redisClient from './utils/connectRedis';
 
 const session = require("express-session")
+const bcrypt = require('bcrypt')
+var escapeHtml = require('escape-html')
 
 AppDataSource.initialize()
   .then(async () => {
@@ -40,11 +42,17 @@ AppDataSource.initialize()
     // ROUTES
     app.use('/api/', router)
     
-    app.post('/testSession', (req, res) => {
+    app.post('/api/testSession', (req: Request, res: Response) => {
       const {email, password} = req.body
       if (email && password){
-        console.log(req.session)
-        res.send('ok')
+        // @ts-ignore
+        req.session.user ={
+          firstName: "maab",
+          lastName: "chaoui",
+        }
+        console.log("please work: ",req)
+        // @ts-ignore
+        res.send('<h1> ok: </h1>' + escapeHtml(req.session.user.firstName))
     }
     else res.send('not ok :/')
     })

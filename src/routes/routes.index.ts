@@ -1,10 +1,11 @@
 import { Request, Response, Router } from "express";
-import { UserLoginRoute } from "./login/login.route";
-import { DashboardRoute } from "./dashboard/dashboard.route";
+import { LoginRoute } from "./login/login.route";
+import { DoctorDashboardRoute } from "./doctorDash/doctorDashboard.route";
 const router = Router();
 
-router.use("/", UserLoginRoute)
-router.use('/dashboard', DashboardRoute)
+// /loginUser and /loginDoctor
+router.use("/", LoginRoute) 
+router.use('/doctorDash', DoctorDashboardRoute)
 
 router.get("/", (req: Request, res: Response) => {
     res.json({message:"API is working"})
