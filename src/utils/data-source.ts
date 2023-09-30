@@ -3,7 +3,7 @@ import 'reflect-metadata';
 import { DataSource } from 'typeorm';
 import config from 'config';
 
-const postgresConfig = config.get<{
+export const postgresConfig = config.get<{
   host: string;
   port: number;
   username: string;
