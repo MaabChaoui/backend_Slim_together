@@ -4,8 +4,8 @@ import addPatientController from "../../controllers/doctorDah/addPatient.control
 
 const router = Router();
 
-router.get('/', doctorDashboardController)
+router.get("/", doctorDashboardController);
 
-router.post('/addPatient', addPatientController)
+router.post("/addPatient", addPatientController);
 
-export {Router as DoctorDashboardRoute}
+export { router as DoctorDashboardRoute };

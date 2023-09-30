@@ -9,7 +9,8 @@ export interface IAddPatient {
   firstName: string;
   lastName: string;
   dateOfBirth: Date;
-  email?: string;
+  email: string;
+  password: string;
   mobile?: string;
   address?: string;
   gender: "male" | "female";

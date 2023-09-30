@@ -6,12 +6,8 @@ import { AppDataSource } from "./utils/data-source";
 import bodyParser from "body-parser";
 import cors from "cors";
 import router from "./routes/routes.index";
-import e from "express";
-
-//import redisClient from './utils/connectRedis';
 
 const session = require("express-session")
-const bcrypt = require('bcrypt')
 var escapeHtml = require('escape-html')
 
 AppDataSource.initialize()
@@ -23,7 +19,7 @@ AppDataSource.initialize()
 
     // MIDDLEWARE
     app.use(bodyParser.json())
-
+    app.use(cors())
     app.use(session({
       secret: 'anyRandomString',
       resave: false,
