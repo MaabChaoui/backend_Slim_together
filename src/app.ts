@@ -7,6 +7,9 @@ import bodyParser from "body-parser";
 import cors from "cors";
 import router from "./routes/routes.index";
 import { postgresConfig } from "./utils/data-source";
+import passport from "passport";
+import getPatientByEmail from "./services/getPatientByEmail.service";
+import getPatientById from "./services/getPatientById.service";
 
 AppDataSource.initialize()
   .then(async () => {
@@ -16,6 +19,8 @@ AppDataSource.initialize()
     const app = express();
 
     // MIDDLEWARE
+    app.use(bodyParser.json());
+
     var escapeHtml = require("escape-html");
 
     const session = require("express-session");
@@ -28,21 +33,33 @@ AppDataSource.initialize()
             connectionString: `postgresql://${postgresConfig.username}:${postgresConfig.password}@${postgresConfig.host}:${postgresConfig.port}/${postgresConfig.database}`,
           },
         }),
-        secret: "1234567890",
+        secret: process.env.SESSION_SECRET,
         resave: false,
-        saveUninitialized: true,
+        saveUninitialized: false,
         cookie: { maxAge: 30 * 24 * 60 * 60 * 1000 }, // 30 days
       })
     );
-    //test sesstion:
+
+    // passport.js
+    const initializePassport = require("../config/passport-config");
+    initializePassport(passport, getPatientByEmail, getPatientById);
+    interface IStartSession {
+      username: string
+    }
+    app.use(passport.initialize())
+    app.use(passport.session())
+    //test session:
     app.get("/startSession", (req, res) => {
-      const { username } = req.body;
+      console.log(req.body)
+      const { username }: IStartSession = req.body;
 
       // @ts-ignore
       req.session.username = username;
-
+      // @ts-ignore
+      console.log(req.session)
       res.status(200).send("welcome, " + escapeHtml(username));
     });
+    
     app.get("/login", (req, res) => {
       // @ts-ignore
       if (!req.session || !req.session.username) {
@@ -58,7 +75,6 @@ AppDataSource.initialize()
     });
 
     // 1. Body parser
-    app.use(bodyParser.json());
 
     // 2. Logger
 

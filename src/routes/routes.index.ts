@@ -6,6 +6,11 @@ const router = Router();
 // /loginUser and /loginDoctor
 router.use("/", LoginRoute) 
 router.use('/doctorDash', DoctorDashboardRoute)
+router.get('/failureLogin', (req:Request, res: Response) => {
+    res.json({
+        message: "login failed"
+    })
+})
 
 router.get("/", (req: Request, res: Response) => {
     res.json({message:"API is working"})

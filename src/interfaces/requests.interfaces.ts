@@ -1,3 +1,5 @@
+import { InsertQueryBuilder } from "typeorm";
+
 export interface ILoginRequest {
   email: string;
   password: string;
