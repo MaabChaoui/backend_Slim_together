@@ -1,4 +1,5 @@
 export interface IResponseError {
-  message?: string;
-  errors?: string[];
+  error?: {
+    message?: string;
+  };
 }

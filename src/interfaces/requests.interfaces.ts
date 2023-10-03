@@ -3,8 +3,6 @@ export interface ILoginRequest {
   password: string;
 }
 
-export interface IRegisterRequest {}
-
 export interface IAddPatient {
   firstName: string;
   lastName: string;
