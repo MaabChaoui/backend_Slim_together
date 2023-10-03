@@ -5,4 +5,4 @@ const router = Router();
 
 router.post("/loginUser", userLoginController);
 router.post("/loginDoctor", doctorLoginController)
-export { router as UserLoginRoute };
+export { router as LoginRoute };

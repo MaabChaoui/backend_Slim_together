@@ -11,10 +11,19 @@ export async function userLoginController(req: Request, res: Response) {
   //validate form?
   
   //login logic
+    if (email && password){
+        // @ts-ignore
+        console.log("userLoginController: ",req.session)
+        //check if email is registered
+
+        //check if password is correct
+    }
+    else{
+      //send message "email or password missing"
+    }
+
+
   
-  //check if email is registered
-  
-  //check if password is correct
   
   //if login successful, send User back to res
   /* req.session.user = {

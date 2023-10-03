@@ -3,7 +3,7 @@ import 'reflect-metadata';
 import { DataSource } from 'typeorm';
 import config from 'config';
 
-const postgresConfig = config.get<{
+export const postgresConfig = config.get<{
   host: string;
   port: number;
   username: string;
@@ -14,9 +14,11 @@ const postgresConfig = config.get<{
 export const AppDataSource = new DataSource({
   ...postgresConfig,
   type: 'postgres',
-  synchronize: false,
+  // only for development, set to false for production:
+  synchronize: true,
   logging: false,
-  entities: ['src/entities/**/*.entity{.ts,.js}'],
+  entities: [
+    'src/entities/**/*.entity{.ts,.js}',],
   migrations: ['src/migrations/**/*{.ts,.js}'],
   subscribers: ['src/subscribers/**/*{.ts,.js}'],
 });

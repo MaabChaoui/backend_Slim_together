@@ -12,10 +12,10 @@ export class Doctor{
     lastName: string
 
     @Column()
-    phoneNummber: string | null
+    phoneNumber: string
 
     @Column()
-    email: string | null
+    email: string
 
     @Column()
     gender: string
@@ -27,19 +27,19 @@ export class Doctor{
     biography: string
 
     @Column()
-    addressLine1: string|null
+    addressLine1: string
 
     @Column()
-    addressLine12: string|null
+    addressLine12: string
 
     @Column()
-    city: string|null
+    city: string
 
     @Column()
-    stateProvince: string|null
+    stateProvince: string
 
     @Column()
-    postalCode: string|null
+    postalCode: string
 
     //many many mooooooooooooooooooooooore
 }
