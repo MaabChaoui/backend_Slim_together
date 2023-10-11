@@ -1,12 +1,15 @@
-require("dotenv").config();
-import express, { Request, Response } from "express";
-import config from "config";
-import validateEnv from "./utils/validateEnv";
-import { AppDataSource } from "./utils/data-source";
-import bodyParser from "body-parser";
-import cors from "cors";
-import router from "./routes/routes.index";
-import { postgresConfig } from "./utils/data-source";
+require('dotenv').config();
+import express, { NextFunction, Request, Response } from 'express';
+import config from 'config';
+import morgan from 'morgan';
+import cookieParser from 'cookie-parser';
+import cors from 'cors';
+import { AppDataSource } from './utils/data-source';
+import AppError from './utils/appError';
+import authRouter from './routes/auth.routes';
+import userRouter from './routes/user.routes';
+import validateEnv from './utils/validateEnv';
+import redisClient from './utils/connectRedis';
 
 AppDataSource.initialize()
   .then(async () => {
@@ -15,75 +18,60 @@ AppDataSource.initialize()
 
     const app = express();
 
+    // TEMPLATE ENGINE
+
     // MIDDLEWARE
-    var escapeHtml = require("escape-html");
-
-    const session = require("express-session");
-    app.use(
-      session({
-        // bad practice but well such is life
-        store: new (require("connect-pg-simple")(session))({
-          // Insert connect-pg-simple options here
-          conObject: {
-            connectionString: `postgresql://${postgresConfig.username}:${postgresConfig.password}@${postgresConfig.host}:${postgresConfig.port}/${postgresConfig.database}`,
-          },
-        }),
-        secret: "1234567890",
-        resave: false,
-        saveUninitialized: true,
-        cookie: { maxAge: 30 * 24 * 60 * 60 * 1000 }, // 30 days
-      })
-    );
-    //test sesstion:
-    app.get("/startSession", (req, res) => {
-      const { username } = req.body;
-
-      // @ts-ignore
-      req.session.username = username;
-
-      res.status(200).send("welcome, " + escapeHtml(username));
-    });
-    app.get("/login", (req, res) => {
-      // @ts-ignore
-      if (!req.session || !req.session.username) {
-        res.status(401).send("<h1>fuck off</h1>");
-      } else {
-        //@ts-ignore
-        res.status(200).send(
-          "looks like your session is good, " +
-            // @ts-ignore
-            escapeHtml(req.session.username)
-        );
-      }
-    });
-
+    
     // 1. Body parser
-    app.use(bodyParser.json());
+    app.use(express.json({ limit: '10kb' }));
 
     // 2. Logger
+    if (process.env.NODE_ENV === 'development') app.use(morgan('dev'));
 
     // 3. Cookie Parser
+    app.use(cookieParser());
 
     // 4. Cors
-    app.use(cors());
+    app.use(
+      cors({
+        origin: config.get<string>('origin'),
+        credentials: true,
+      })
+    );
 
     // ROUTES
-    app.use("/api/", router);
+    app.use('/api/auth', authRouter);
+    app.use('/api/users', userRouter);
 
     // HEALTH CHECKER
-    app.get("/api/healthchecker", async (_, res: Response) => {
-      const message = "here we go";
+    app.get('/api/healthChecker', async (_, res: Response) => {
+      const message = await redisClient.get('try');
+
       res.status(200).json({
-        status: "success",
+        status: 'success',
         message,
       });
     });
 
     // UNHANDLED ROUTE
+    app.all('*', (req: Request, res: Response, next: NextFunction) => {
+      next(new AppError(404, `Route ${req.originalUrl} not found`));
+    });
 
     // GLOBAL ERROR HANDLER
+    app.use(
+      (error: AppError, req: Request, res: Response, next: NextFunction) => {
+        error.status = error.status || 'error';
+        error.statusCode = error.statusCode || 500;
 
-    const port = config.get<number>("port");
+        res.status(error.statusCode).json({
+          status: error.status,
+          message: error.message,
+        });
+      }
+    );
+
+    const port = config.get<number>('port');
     app.listen(port);
 
     console.log(`Server started on port: ${port}`);

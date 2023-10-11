@@ -1,4 +1,4 @@
-import { User } from "../entities/Patient.entity";
+import { User } from "../entities/User.entity";
 
 export interface ILoginResponse {
     user?: User
