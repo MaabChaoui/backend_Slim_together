@@ -1,9 +1,10 @@
 import config from 'config';
-import { User } from '../entities/User.entity';
+import { User } from '../entities/user.entity';
 import { CreateUserInput } from '../schemas/user.schema';
 import redisClient from '../utils/connectRedis';
 import { AppDataSource } from '../utils/data-source';
 import { signJwt } from '../utils/jwt';
+
 const userRepository = AppDataSource.getRepository(User);
 
 export const createUser = async (input: CreateUserInput) => {

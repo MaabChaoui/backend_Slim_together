@@ -5,6 +5,12 @@ export enum RoleEnumType {
   USER = 'user',
   ADMIN = 'admin',
 }
+
+export enum GenderEnumType {
+  MALE = 'male',
+  FEMALE = 'female',
+}
+
 const bcrypt = require('bcrypt')
 
 @Entity('users')

@@ -10,7 +10,7 @@ import {
 import AppError from "../utils/appError";
 import redisClient from "../utils/connectRedis";
 import { signJwt, verifyJwt } from "../utils/jwt";
-import { User } from "../entities/User.entity";
+import { User } from "../entities/user.entity";
 
 // ? Cookie Options Here
 const cookiesOptions: CookieOptions = {
