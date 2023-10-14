@@ -1,43 +1,96 @@
-import { object, string, TypeOf, z } from 'zod';
-import { RoleEnumType } from '../entities/user.entity';
+import { object, string, TypeOf, z } from "zod";
+import {
+  GenderEnumType,
+  MaritalStatusEnumType,
+} from "../entities/model.entity";
+import { num, str } from "envalid";
 
 export const createUserSchema = object({
   body: object({
-    name: string({
-      required_error: 'Name is required',
+    fName: string({
+      required_error: "Name is required",
     }),
+
+    lName: string({
+      required_error: "Name is required",
+    }),
+
     email: string({
-      required_error: 'Email address is required',
-    }).email('Invalid email address'),
+      required_error: "Email address is required",
+    }).email("Invalid email address"),
+
+    phone: string(),
+
+    photoURL: z.optional(string()),
+
     password: string({
-      required_error: 'Password is required',
+      required_error: "Password is required",
     })
-      .min(8, 'Password must be more than 8 characters')
-      .max(32, 'Password must be less than 32 characters'),
+      .min(8, "Password must be more than 8 characters")
+      .max(32, "Password must be less than 32 characters"),
+
     passwordConfirm: string({
-      required_error: 'Please confirm your password',
+      required_error: "Please confirm your password",
     }),
-    role: z.optional(z.nativeEnum(RoleEnumType)),
+
+    gender: z.nativeEnum(GenderEnumType),
+
+    dateOfBirth: z.optional(
+      z.date({
+        required_error: "dateOfBirth is required",
+      })
+    ),
+
+    maritalStatus: z.nativeEnum(MaritalStatusEnumType),
+
+    height: z.optional(
+      z
+        .number()
+        .min(80, "Height must be at least 80 cm'")
+        .max(220, "Invalid height")
+    ),
+
+    weight: z.number(),
+
+    waistMeasurements: string(),
+
+    hipMeasurements: string(),
+
+    illnesses: z.optional(string()),
+
+    sleepingProblems: z.optional(string()),
+
+    parentsIlness: z.optional(string()),
+
+    parentsIllnessDescription: z.optional(string()),
+
+    plan: z.optional(
+      string({
+        required_error: "Please confirm your password",
+      })
+    ),
+    //
+    //
   }).refine((data) => data.password === data.passwordConfirm, {
-    path: ['passwordConfirm'],
-    message: 'Passwords do not match',
+    path: ["passwordConfirm"],
+    message: "Passwords do not match",
   }),
 });
 
 export const loginUserSchema = object({
   body: object({
     email: string({
-      required_error: 'Email address is required',
-    }).email('Invalid email address'),
+      required_error: "Email address is required",
+    }).email("Invalid email address"),
     password: string({
-      required_error: 'Password is required',
-    }).min(8, 'Invalid email or password'),
+      required_error: "Password is required",
+    }).min(8, "Invalid email or password"),
   }),
 });
 
 export type CreateUserInput = Omit<
-  TypeOf<typeof createUserSchema>['body'],
-  'passwordConfirm'
+  TypeOf<typeof createUserSchema>["body"],
+  "passwordConfirm"
 >;
 
-export type LoginUserInput = TypeOf<typeof loginUserSchema>['body'];
+export type LoginUserInput = TypeOf<typeof loginUserSchema>["body"];

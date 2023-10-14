@@ -13,7 +13,7 @@ import { createUserSchema, loginUserSchema } from '../schemas/user.schema';
 const router = express.Router();
 
 // Register user
-router.post('/register', validate(createUserSchema), registerUserHandler);
+router.post('/addUser', validate(createUserSchema), registerUserHandler);
 
 // Login user
 router.post('/login', validate(loginUserSchema), loginUserHandler);

@@ -7,7 +7,8 @@ import { signJwt } from '../utils/jwt';
 
 const userRepository = AppDataSource.getRepository(User);
 
-export const createUser = async (input: CreateUserInput) => {
+export const createUser = async (input:any) => {
+  console.log("input:\n",input)
   return (await AppDataSource.manager.save(
     AppDataSource.manager.create(User, input)
   )) as User;

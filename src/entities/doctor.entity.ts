@@ -5,14 +5,9 @@ import { Experience } from "./doctorProfile/experience.entity";
 import { Services } from "./doctorProfile/services.entity";
 import { Awards } from "./doctorProfile/awards.entity";
 import { Specializations } from "./doctorProfile/specializations.entity";
+import { GenderEnumType } from "./model.entity";
 
 const bcrypt = require("bcrypt");
-
-export enum GenderEnumType {
-  CHOOSE_GENDER = "choose gender",
-  MALE = "male",
-  FEMALE = "female",
-}
 
 @Entity("doctor")
 export class Doctor extends Model {

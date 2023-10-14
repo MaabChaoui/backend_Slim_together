@@ -14,7 +14,7 @@ import { User } from "../entities/user.entity";
 
 // ? Cookie Options Here
 const cookiesOptions: CookieOptions = {
-  //temp false 
+  //temp false
   httpOnly: false,
   sameSite: "lax",
 };
@@ -45,12 +45,44 @@ export const registerUserHandler = async (
   next: NextFunction
 ) => {
   try {
-    const { name, password, email } = req.body;
+    const {
+      fName,
+      lName,
+      email,
+      phone,
+      photoURL,
+      password,
+      gender,
+      dateOfBirth,
+      maritalStatus,
+      height,
+      weight,
+      waistMeasurements,
+      hipMeasurements,
+      illnesses,
+      parentsIllnessDescription,
+      sleepingProblems,
+      plan,
+    } = req.body;
 
     const user = await createUser({
-      name,
+      fName,
+      lName,
       email: email.toLowerCase(),
+      phone,
+      photoURL,
       password,
+      gender,
+      dateOfBirth,
+      maritalStatus,
+      height,
+      weight,
+      waistMeasurements,
+      hipMeasurements,
+      sleepingProblems,
+      illnesses,
+      parentsIllnessDescription,
+      plan,
     });
 
     res.status(201).json({

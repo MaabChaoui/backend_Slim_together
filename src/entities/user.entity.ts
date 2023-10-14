@@ -1,48 +1,91 @@
-import { Entity, Column, Index, BeforeInsert } from 'typeorm';
-import Model from './model.entity';
+import { Entity, Column, Index, BeforeInsert } from "typeorm";
+import Model, {
+  MaritalStatusEnumType,
+  GenderEnumType,
+  RoleEnumType,
+} from "./model.entity";
 
-export enum RoleEnumType {
-  USER = 'user',
-  ADMIN = 'admin',
-}
+const bcrypt = require("bcrypt");
 
-export enum GenderEnumType {
-  MALE = 'male',
-  FEMALE = 'female',
-}
-
-const bcrypt = require('bcrypt')
-
-@Entity('users')
+@Entity("users")
 export class User extends Model {
   @Column()
-  name: string;
+  fName: string;
 
-  @Index('email_index')
+  @Column()
+  lName: string;
+
+  @Index("email_index")
   @Column({
     unique: true,
   })
   email: string;
 
+  @Column({
+    nullable: true,
+  })
+  phone: string;
+
+  @Column({
+    default: new Date("01-01-1980"),
+  })
+  dateOfBirth: Date;
+
+  @Column({
+    nullable: true,
+    default: "https://i.stack.imgur.com/l60Hf.png",
+  })
+  photoURL: string;
+
   @Column()
   password: string;
 
-  @Column({
-    type: 'enum',
-    enum: RoleEnumType,
-    default: RoleEnumType.USER,
+  /* @Column({
+    default: "default.png",
   })
-  role: RoleEnumType.USER;
+  photo: string; */
 
   @Column({
-    default: 'default.png',
+    type: "enum",
+    enum: GenderEnumType,
+    default: GenderEnumType.CHOOSE_GENDER,
   })
-  photo: string;
+  gender: GenderEnumType.CHOOSE_GENDER;
 
   @Column({
-    default: false,
+    type: "enum",
+    enum: MaritalStatusEnumType,
+    default: MaritalStatusEnumType.NOT_MARRIED,
   })
-  verified: boolean;
+  maritalStatus: MaritalStatusEnumType.NOT_MARRIED;
+
+  @Column({ nullable: true })
+  height: number; //cm, 80 <= height <= 220
+
+  @Column({ nullable: true })
+  weight: number;
+
+  @Column({ nullable: true })
+  waistMeasurements: string;
+
+  @Column({ nullable: true })
+  hipMeasurements: string;
+
+  @Column({ nullable: true })
+  illnesses: string;
+
+  @Column({ nullable: true })
+  sleepingProblems: string;
+
+  @Column({ nullable: true })
+  parentsIlness: boolean;
+
+  @Column({ nullable: true })
+  parentsIllnessDescription: string;
+
+  // plan?????????????????????
+  @Column()
+  plan: string;
 
   toJSON() {
     return { ...this, password: undefined, verified: undefined };
