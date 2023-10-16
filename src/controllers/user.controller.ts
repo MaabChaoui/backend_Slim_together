@@ -38,14 +38,25 @@ export const changeUserPasswordHandler = async (
     if (!(await User.comparePasswords(oldPassword, localUser.password))) {
       return next(new AppError(400, "Wrong password"));
     }
-
-    // update password:
-    updateUserPassword(localUser.id, newPassword);
+    await updateUserPassword(localUser.id, newPassword);
     return res.status(200).json({
       status: 200,
       message: "Password updated successfully!",
     });
+    /* // update password:
+    const result = await updateUserPassword(localUser.id, newPassword);
+
+    console.log("result:",result)
+
+    if (result !instanceof AppError){
+    return res.status(200).json({
+      status: 200,
+      message: "Password updated successfully!",
+    });
+  } else {
+    return next(result)
+  } */
   } catch (err: any) {
-    return (new AppError(404, "user not found"))
+    return (new AppError(404, err.message))
   }
 };

@@ -1,4 +1,4 @@
-import { Entity, Column, Index, BeforeInsert, AfterInsert } from "typeorm";
+import { Entity, Column, Index, BeforeInsert, AfterInsert, BeforeUpdate } from "typeorm";
 import Model, {
   MaritalStatusEnumType,
   GenderEnumType,
@@ -114,6 +114,7 @@ export class User extends Model {
   }
   // ? Hash password before saving to database
   @BeforeInsert()
+  @BeforeUpdate()
   async hashPassword() {
     this.password = await bcrypt.hash(this.password, 12);
   }

@@ -56,9 +56,9 @@ export const updateUserPassword = async (id:string, newPassword: string) => {
   try {
     const user = await findUserById(id)
     // @ts-ignore
-    return await doctorRepository.save(Object.assign(user, {password: newPassword}))
-  } catch (err) {
-    return (new AppError(404, "User not found"))
+    return await userRepository.save(Object.assign(user, {password: newPassword}))
+  } catch (err: any) {
+    return (new AppError(404, err.message))
   }
 
 }

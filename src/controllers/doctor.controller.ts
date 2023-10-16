@@ -46,8 +46,8 @@ export const changeDoctorPasswordHandler = async (
       return next(new AppError(400, "Wrong password"));
     }
 
-    // change update password:
-    updateDoctorPassword(localDoctor.id, newPassword);
+    // update password:
+    await updateDoctorPassword(localDoctor.id, newPassword);
     return res.status(200).json({
       status: 200,
       message: "Password updated successfully!",
