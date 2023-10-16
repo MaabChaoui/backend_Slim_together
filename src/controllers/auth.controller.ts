@@ -11,6 +11,9 @@ import AppError from "../utils/appError";
 import redisClient from "../utils/connectRedis";
 import { signJwt, verifyJwt } from "../utils/jwt";
 import { User } from "../entities/user.entity";
+import { LoginDoctorInput } from "../schemas/doctor.schemas";
+import { createDoctor, findDoctorByEmail } from "../services/doctor.service";
+import { Doctor } from "../entities/doctor.entity";
 
 // ? Cookie Options Here
 const cookiesOptions: CookieOptions = {
@@ -86,7 +89,7 @@ export const registerUserHandler = async (
     });
 
     res.status(201).json({
-      status: "success",
+      status:200,
       data: {
         user,
       },
@@ -94,7 +97,7 @@ export const registerUserHandler = async (
   } catch (err: any) {
     if (err.code === "23505") {
       return res.status(409).json({
-        status: "fail",
+        status: 409,
         message: "User with that email already exist",
       });
     }
@@ -131,7 +134,49 @@ export const loginUserHandler = async (
 
     // 4. Send response
     res.status(200).json({
-      status: "success",
+      status:200,
+      access_token,
+    });
+  } catch (err: any) {
+    next(err);
+  }
+};
+
+// ? login doctor controller
+
+export const loginDoctorHandler = async (
+  req: Request<{}, {}, LoginDoctorInput>,
+  res: Response,
+  next: NextFunction
+) => {
+  try {
+    const { email, password } = req.body;
+    const doctor = await findDoctorByEmail({ email });
+
+    //1. Check if doctor exists and password is valid
+    if (
+      !doctor ||
+      !(await Doctor.comparePasswords(password, doctor.password))
+    ) {
+      console.log("found the error at compare pass: ", doctor);
+
+      return next(new AppError(400, "Invalid email or password"));
+    }
+
+    // 2. Sign Access and Refresh Tokens
+    const { access_token, refresh_token } = await signTokens(doctor);
+
+    // 3. Add Cookies
+    res.cookie("access_token", access_token, accessTokenCookieOptions);
+    res.cookie("refresh_token", refresh_token, refreshTokenCookieOptions);
+    res.cookie("logged_in", true, {
+      ...accessTokenCookieOptions,
+      httpOnly: false,
+    });
+
+    // 4. Send response
+    res.status(200).json({
+      status:200,
       access_token,
     });
   } catch (err: any) {
@@ -193,7 +238,7 @@ export const refreshAccessTokenHandler = async (
 
     // 5. Send response
     res.status(200).json({
-      status: "success",
+      status:200,
       access_token,
     });
   } catch (err: any) {
@@ -209,7 +254,7 @@ const logout = (res: Response) => {
   res.cookie("logged_in", "", { maxAge: -1 });
 };
 
-export const logoutHandler = async (
+export const logoutUserHandler = async (
   req: Request,
   res: Response,
   next: NextFunction
@@ -221,9 +266,91 @@ export const logoutHandler = async (
     logout(res);
 
     res.status(200).json({
-      status: "success",
+      status:200,
     });
   } catch (err: any) {
+    next(err);
+  }
+};
+
+// ? logout doctor controller
+
+export const logoutDoctorHandler = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
+  try {
+    const doctor = res.locals.doctor;
+
+    await redisClient.del(doctor.id);
+    logout(res);
+
+    res.status(200).json({
+      status:200,
+    });
+  } catch (err: any) {
+    next(err);
+  }
+};
+
+// ? register doctor controller
+// ,,
+export const registerDoctorHandler = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
+  try {
+    const {
+      fName,
+      lName,
+      email,
+      phone,
+      photoURL,
+      password,
+      dateOfBirth,
+      gender,
+      bio,
+      address,
+      city,
+      wilaya,
+      postcode,
+      clinicName,
+      clinicAddress,
+    } = req.body;
+
+    const doctor = await createDoctor({
+      fName,
+      lName,
+      email: email.toLowerCase(),
+      phone,
+      photoURL,
+      password,
+      gender,
+      dateOfBirth,
+      bio,
+      address,
+      city,
+      wilaya,
+      postcode,
+      clinicName,
+      clinicAddress,
+    });
+
+    res.status(201).json({
+      status:200,
+      data: {
+        doctor,
+      },
+    });
+  } catch (err: any) {
+    if (err.code === "23505") {
+      return res.status(409).json({
+        status: "fail",
+        message: "Doctor with that email already exist",
+      });
+    }
     next(err);
   }
 };

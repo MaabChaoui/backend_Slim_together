@@ -81,7 +81,7 @@ AppDataSource.initialize()
     app.get("/api/healthchecker", async (_, res: Response) => {
       const message = "here we go";
       res.status(200).json({
-        status: "success",
+        status:200,
         message,
       });
     });

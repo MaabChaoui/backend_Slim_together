@@ -1,4 +1,4 @@
-import { Entity, Column, Index, BeforeInsert, OneToMany } from "typeorm";
+import { Entity, Column, Index, BeforeInsert, OneToMany, BeforeUpdate } from "typeorm";
 import Model from "./model.entity";
 import { Education } from "./doctorProfile/education.entity";
 import { Experience } from "./doctorProfile/experience.entity";
@@ -7,12 +7,15 @@ import { Awards } from "./doctorProfile/awards.entity";
 import { Specializations } from "./doctorProfile/specializations.entity";
 import { GenderEnumType } from "./model.entity";
 
-const bcrypt = require("bcrypt");
+const bcrypt = require('bcrypt')
 
 @Entity("doctor")
 export class Doctor extends Model {
-  @Column()
-  name: string;
+  @Column({ name: "fname" })
+  fName: string;
+
+  @Column({ name: "lname" })
+  lName: string;
 
   @Column({
     unique: true,
@@ -22,6 +25,13 @@ export class Doctor extends Model {
   @Column()
   phone: string;
 
+  @Column({
+    name: "photourl",
+    nullable: true,
+    default: "https://i.stack.imgur.com/l60Hf.png",
+  })
+  photoURL: string;
+
   @Column()
   password: string;
 
@@ -30,9 +40,10 @@ export class Doctor extends Model {
     enum: GenderEnumType,
     default: GenderEnumType.CHOOSE_GENDER,
   })
-  role: GenderEnumType.CHOOSE_GENDER;
+  gender: GenderEnumType.CHOOSE_GENDER;
 
   @Column({
+    name: "dateofbirth",
     default: new Date("01-01-1980"),
   })
   DateOfBirth: Date;
@@ -67,10 +78,10 @@ export class Doctor extends Model {
   @OneToMany(() => Specializations, (sp) => sp.doctor)
   specializations: Specializations[];
 
-  @Column()
+  @Column({ name: "clinicname" })
   clinicName: string;
 
-  @Column()
+  @Column({ name: "clinicaddress" })
   clinicAddress: string;
 
   toJSON() {
@@ -78,6 +89,7 @@ export class Doctor extends Model {
   }
   // ? Hash password before saving to database
   @BeforeInsert()
+  @BeforeUpdate()
   async hashPassword() {
     this.password = await bcrypt.hash(this.password, 12);
   }
@@ -88,5 +100,5 @@ export class Doctor extends Model {
     hashedPassword: string
   ) {
     return await bcrypt.compare(candidatePassword, hashedPassword);
-  }
+  } 
 }

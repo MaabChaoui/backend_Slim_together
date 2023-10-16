@@ -1,18 +1,17 @@
-import { Entity, Column, Index, BeforeInsert } from "typeorm";
+import { Entity, Column, Index, BeforeInsert, AfterInsert } from "typeorm";
 import Model, {
   MaritalStatusEnumType,
   GenderEnumType,
-  RoleEnumType,
 } from "./model.entity";
 
 const bcrypt = require("bcrypt");
 
 @Entity("users")
 export class User extends Model {
-  @Column()
+  @Column({ name: "fname" })
   fName: string;
 
-  @Column()
+  @Column({ name: "lname" })
   lName: string;
 
   @Index("email_index")
@@ -27,11 +26,18 @@ export class User extends Model {
   phone: string;
 
   @Column({
+    nullable: true,
+  })
+  address: string;
+
+  @Column({
+    name: "dateofbirth",
     default: new Date("01-01-1980"),
   })
   dateOfBirth: Date;
 
   @Column({
+    name: "photourl",
     nullable: true,
     default: "https://i.stack.imgur.com/l60Hf.png",
   })
@@ -53,6 +59,7 @@ export class User extends Model {
   gender: GenderEnumType.CHOOSE_GENDER;
 
   @Column({
+    name: "maritalstatus",
     type: "enum",
     enum: MaritalStatusEnumType,
     default: MaritalStatusEnumType.NOT_MARRIED,
@@ -65,27 +72,42 @@ export class User extends Model {
   @Column({ nullable: true })
   weight: number;
 
-  @Column({ nullable: true })
+  @Column({
+    name: "waistmeasurements",
+    nullable: true,
+  })
   waistMeasurements: string;
 
-  @Column({ nullable: true })
+  @Column({
+    name: "hipmeasurements",
+    nullable: true,
+  })
   hipMeasurements: string;
 
   @Column({ nullable: true })
   illnesses: string;
 
-  @Column({ nullable: true })
+  @Column({
+    name: "sleepingproblems",
+    nullable: true,
+  })
   sleepingProblems: string;
 
-  @Column({ nullable: true })
-  parentsIlness: boolean;
-
-  @Column({ nullable: true })
-  parentsIllnessDescription: string;
+  @Column({
+    name: "parentsillness",
+    nullable: true,
+  })
+  parentsIllness: boolean;
 
   // plan?????????????????????
   @Column()
   plan: string;
+
+  @Column({
+    name: "parentsillnessdescription",
+    nullable: true,
+  })
+  parentsIllnessDescription: string;
 
   toJSON() {
     return { ...this, password: undefined, verified: undefined };

@@ -15,7 +15,7 @@ export const validate =
     } catch (error) {
       if (error instanceof ZodError) {
         return res.status(400).json({
-          status: 'fail',
+          status: 400,
           errors: error.errors,
         });
       }

@@ -20,3 +20,23 @@ export const requireUser = (
     next(err);
   }
 };
+
+export const requireDoctor = (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
+  try {
+    const doctor = res.locals.doctor;
+
+    if (!doctor) {
+      return next(
+        new AppError(400, `Session has expired or user doesn't exist`)
+      );
+    }
+
+    next();
+  } catch (err: any) {
+    next(err);
+  }
+};
