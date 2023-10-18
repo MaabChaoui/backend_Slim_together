@@ -1,8 +1,11 @@
-import { NextFunction, Request, Response } from 'express';
-import { changePasswordUserInput } from '../schemas/user.schema';
-import { User } from '../entities/user.entity';
-import AppError from '../utils/appError';
-import { updateUserPassword } from '../services/user.service';
+import { NextFunction, Request, Response } from "express";
+import {
+  changePasswordUserInput,
+  dailyReportInput,
+} from "../schemas/user.schema";
+import { User } from "../entities/user.entity";
+import AppError from "../utils/appError";
+import { createDailyReport, updateUserPassword } from "../services/user.service";
 
 export const getMeHandler = async (
   req: Request,
@@ -13,16 +16,15 @@ export const getMeHandler = async (
     const user = res.locals.user;
 
     res.status(200).status(200).json({
-      status: 'success',
+      status: "success",
       data: {
         user,
       },
     });
   } catch (err: any) {
-    next(err);
+    next(new AppError(400, err.message));
   }
 };
-
 
 export const changeUserPasswordHandler = async (
   req: Request<{}, {}, changePasswordUserInput>,
@@ -57,6 +59,47 @@ export const changeUserPasswordHandler = async (
     return next(result)
   } */
   } catch (err: any) {
-    return (new AppError(404, err.message))
+    return new AppError(404, err.message);
   }
+};
+
+export const sendDailyReportHandler = async (
+  req: Request<{}, {}, dailyReportInput>,
+  res: Response,
+  next: NextFunction
+) => {
+  const {
+    wakeUpTime,
+    sleepTime,
+    screenTime,
+    lastScreenTime,
+    stepCount,
+    exerciseDuration,
+    exercises,
+    breathingSessionDuration,
+    nightFasting,
+  } = req.body;
+
+  try {
+    const user = res.locals.user;
+    const dr = await createDailyReport({
+      wakeUpTime,
+      sleepTime,
+      screenTime,
+      lastScreenTime,
+      stepCount,
+      exerciseDuration,
+      exercises,
+      breathingSessionDuration,
+      nightFasting,
+    }, user)
+    console.log("daily report:",dr)
+    res.json({
+      status: 200,
+      message: "successfully add daily report"
+    })
+  } catch (err: any) {
+    next(new AppError(err.status, err.message));
+  }
+  
 };

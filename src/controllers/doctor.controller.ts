@@ -1,3 +1,4 @@
+require("dotenv").config();
 import { NextFunction, Request, Response } from "express";
 import { findAllUsers } from "../services/user.service";
 import { changePasswordDoctorInput } from "../schemas/doctor.schemas";
@@ -11,6 +12,7 @@ import {
   findDoctorById,
   updateDoctorPassword,
 } from "../services/doctor.service";
+import config from "config";
 
 export const getMyPatientsHandler = async (
   req: Request,
@@ -54,5 +56,27 @@ export const changeDoctorPasswordHandler = async (
     });
   } catch (err: any) {
     next(err);
+  }
+};
+
+export const getDoctorHandler = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
+  try {
+    const email = config.get<{
+      doctorEmail: string;
+    }>("doctorEmail");
+
+    const doctor = await findDoctorByEmail({ email: `${email}` });
+
+    res.status(201).json({
+      data: { doctor },
+      status: "fuck",
+    });
+  } catch (err: any) {
+    // ????
+    return next(new AppError(400, err.message));
   }
 };

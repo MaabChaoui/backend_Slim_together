@@ -3,7 +3,6 @@ import {
   GenderEnumType,
   MaritalStatusEnumType,
 } from "../entities/model.entity";
-import { str } from "envalid";
 
 export const loginDoctorSchema = object({
   body: object({
@@ -26,8 +25,8 @@ export const changePasswordDoctorSchema = object({
     newPassword: string({
       required_error: "New password is required",
     })
-      .min(8, "Password must be more than 8 characters")
-      .max(32, "Password must be less than 32 characters"),
+      .min(8, "New password must be more than 8 characters")
+      .max(32, "New password must be less than 32 characters"),
     newPasswordConfirm: string(),
   }).refine((data) => data.newPassword === data.newPasswordConfirm, {
     path: ["newPasswordConfirm"],

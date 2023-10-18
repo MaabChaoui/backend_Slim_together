@@ -3,10 +3,16 @@ import { Column, Entity } from "typeorm";
 
 //id is inherited from Model
 
-@Entity()
-export class Meals extends Model {
-  @Column()
+@Entity("meals_")
+export class Meals_ extends Model {
+  @Column({
+    name:"time"
+  })
   time: string;
-  @Column()
-  components: string;
+
+  @Column({
+    name:"components"
+  })
+  components: string
 }
+ 

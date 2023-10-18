@@ -11,13 +11,13 @@ import {
 import { deserializeDoctor, deserializeUser } from '../middleware/deserializeMiddlware';
 import { requireDoctor, requireUser } from '../middleware/requireMiddlware';
 import { validate } from '../middleware/validate';
-import { createUserSchema, loginUserSchema } from '../schemas/user.schema';
+import { addPatientSchema, loginUserSchema } from '../schemas/user.schema';
 import { createDoctor } from '../services/doctor.service';
 
 const router = express.Router();
 
 // Register user
-router.post('/addUser', validate(createUserSchema), registerUserHandler);
+router.post('/addUser', validate(addPatientSchema), registerUserHandler);
 
 // create doctor
 // DO NOT USE WITH FRONTEND, ONLY POSTMAN

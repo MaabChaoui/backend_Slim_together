@@ -1,11 +1,10 @@
-import { object, string, TypeOf, z } from "zod";
+import { boolean, object, string, TypeOf, z } from "zod";
 import {
   GenderEnumType,
   MaritalStatusEnumType,
 } from "../entities/model.entity";
-import { num, str } from "envalid";
 
-export const createUserSchema = object({
+export const addPatientSchema = object({
   body: object({
     fName: string({
       required_error: "Name is required",
@@ -89,7 +88,7 @@ export const loginUserSchema = object({
 });
 
 export type CreateUserInput = Omit<
-  TypeOf<typeof createUserSchema>["body"],
+  TypeOf<typeof addPatientSchema>["body"],
   "passwordConfirm"
 >;
 
@@ -103,8 +102,8 @@ export const changePasswordUserSchema = object({
     newPassword: string({
       required_error: "New password is required",
     })
-      .min(8, "Password must be more than 8 characters")
-      .max(32, "Password must be less than 32 characters"),
+      .min(8, "New password must be more than 8 characters")
+      .max(32, "New password must be less than 32 characters"),
     newPasswordConfirm: string(),
   }).refine((data) => data.newPassword === data.newPasswordConfirm, {
     path: ["newPasswordConfirm"],
@@ -116,3 +115,29 @@ export type changePasswordUserInput = Omit<
   TypeOf<typeof changePasswordUserSchema>["body"],
   "newPasswordConfirm"
 >;
+/**
+ *  wakeUpTime,
+      sleepTime,
+      screenTime,
+      lastScreenTime,
+      stepCount,
+      exerciseDuration,
+      exercises,
+      breathingSessionDuration,
+      nightFasting,
+ */
+export const dailyReportSchema = object({
+  body: object({
+    wakeUpTime: z.optional(string()),
+    sleepTime: z.optional(string()),
+    screenTime: z.optional(string()),
+    lastScreenTime: z.optional(string()),
+    stepCount: z.optional(string()),
+    exerciseDuration: z.optional(string()),
+    exercises: z.optional(string()),
+    breathingSessionDuration: z.optional(string()),
+    nightFasting: z.optional(boolean()),
+  }),
+});
+
+export type dailyReportInput = TypeOf<typeof dailyReportSchema>["body"];

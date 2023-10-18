@@ -1,8 +1,14 @@
-import { Entity, Column, Index, BeforeInsert, AfterInsert, BeforeUpdate } from "typeorm";
-import Model, {
-  MaritalStatusEnumType,
-  GenderEnumType,
-} from "./model.entity";
+import {
+  Entity,
+  Column,
+  Index,
+  BeforeInsert,
+  AfterInsert,
+  BeforeUpdate,
+  OneToMany,
+} from "typeorm";
+import Model, { MaritalStatusEnumType, GenderEnumType } from "./model.entity";
+import { DailyReport } from "./PatientProfile/dailyReport.entity";
 
 const bcrypt = require("bcrypt");
 
@@ -108,6 +114,9 @@ export class User extends Model {
     nullable: true,
   })
   parentsIllnessDescription: string;
+
+  @OneToMany(() => DailyReport, (dailyReport) => dailyReport.user)
+  dailyReports: DailyReport[];
 
   toJSON() {
     return { ...this, password: undefined, verified: undefined };

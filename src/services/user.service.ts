@@ -6,14 +6,17 @@ import { AppDataSource } from "../utils/data-source";
 import { signJwt } from "../utils/jwt";
 import { Doctor } from "../entities/doctor.entity";
 import AppError from "../utils/appError";
+import { DailyReport } from "../entities/PatientProfile/dailyReport.entity";
+import { dailyReportInput } from "../schemas/user.schema";
 
 const userRepository = AppDataSource.getRepository(User);
+const dailyReportRepository = AppDataSource.getRepository(DailyReport);
 
 export const createUser = async (input: any) => {
-  console.log("input:\n", input);
+  console.log("create user input::\n", input);
   const user = AppDataSource.manager.create(User, input);
-  console.log(user.password)
-  return (await AppDataSource.manager.save(user)) as User; 
+
+  return (await AppDataSource.manager.save(user)) as User;
 };
 
 export const findUserByEmail = async ({ email }: { email: string }) => {
@@ -52,13 +55,22 @@ export const signTokens = async (user: User | Doctor) => {
   return { access_token, refresh_token };
 };
 
-export const updateUserPassword = async (id:string, newPassword: string) => {
+export const updateUserPassword = async (id: string, newPassword: string) => {
   try {
-    const user = await findUserById(id)
-    // @ts-ignore
-    return await userRepository.save(Object.assign(user, {password: newPassword}))
+    const user = await findUserById(id);
+    return await userRepository.save(
+      // @ts-ignore
+      Object.assign(user, { password: newPassword })
+    );
   } catch (err: any) {
-    return (new AppError(404, err.message))
+    return new AppError(404, err.message);
   }
+};
 
-}
+export const createDailyReport = async (input: any, user: User) => {
+  const dailyReport = dailyReportRepository.manager.create(DailyReport, {
+    ...input,
+    user: user,
+  });
+  return await dailyReportRepository.manager.save(dailyReport);
+};
