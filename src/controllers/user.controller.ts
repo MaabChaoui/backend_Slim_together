@@ -93,7 +93,8 @@ export const sendDailyReportHandler = async (
       breathingSessionDuration,
       nightFasting,
     }, user)
-    console.log("daily report:",dr)
+
+    //console.log("daily report:",dr)
     res.json({
       status: 200,
       message: "successfully add daily report"
