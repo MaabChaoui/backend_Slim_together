@@ -1,4 +1,11 @@
-import { Entity, Column, Index, BeforeInsert, OneToMany, BeforeUpdate } from "typeorm";
+import {
+  Entity,
+  Column,
+  Index,
+  BeforeInsert,
+  OneToMany,
+  BeforeUpdate,
+} from "typeorm";
 import Model from "./model.entity";
 import { Education } from "./doctorProfile/education.entity";
 import { Experience } from "./doctorProfile/experience.entity";
@@ -7,7 +14,7 @@ import { Awards } from "./doctorProfile/awards.entity";
 import { Specializations } from "./doctorProfile/specializations.entity";
 import { GenderEnumType } from "./model.entity";
 
-const bcrypt = require('bcrypt')
+const bcrypt = require("bcrypt");
 
 @Entity("doctor")
 export class Doctor extends Model {
@@ -100,5 +107,5 @@ export class Doctor extends Model {
     hashedPassword: string
   ) {
     return await bcrypt.compare(candidatePassword, hashedPassword);
-  } 
+  }
 }

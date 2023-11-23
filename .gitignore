@@ -5,7 +5,7 @@
 # Dependency directories
 node_modules/
 
-# Environment configuration files
+# Environmentas configuration files
 .env
 
 # Dependency lock files
@@ -15,7 +15,7 @@ package-lock.json
 build/
 tmp/
 temp/
-
+IGNORE.txt
 
 
 

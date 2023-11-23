@@ -5,7 +5,11 @@ import {
 } from "../schemas/user.schema";
 import { User } from "../entities/user.entity";
 import AppError from "../utils/appError";
-import { createDailyReport, updateUserPassword } from "../services/user.service";
+import {
+  createDailyReport,
+  loadMessages,
+  updateUserPassword,
+} from "../services/user.service";
 
 export const getMeHandler = async (
   req: Request,
@@ -82,25 +86,36 @@ export const sendDailyReportHandler = async (
 
   try {
     const user = res.locals.user;
-    const dr = await createDailyReport({
-      wakeUpTime,
-      sleepTime,
-      screenTime,
-      lastScreenTime,
-      stepCount,
-      exerciseDuration,
-      exercises,
-      breathingSessionDuration,
-      nightFasting,
-    }, user)
+    const dr = await createDailyReport(
+      {
+        wakeUpTime,
+        sleepTime,
+        screenTime,
+        lastScreenTime,
+        stepCount,
+        exerciseDuration,
+        exercises,
+        breathingSessionDuration,
+        nightFasting,
+      },
+      user
+    );
 
     //console.log("daily report:",dr)
     res.json({
       status: 200,
-      message: "successfully add daily report"
-    })
+      message: "successfully add daily report",
+    });
   } catch (err: any) {
     next(new AppError(err.status, err.message));
   }
-  
+};
+
+export const loadMessagesHandler = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
+  const messages = await loadMessages(res.locals.user.id)
+  res.status(200).json(messages)
 };

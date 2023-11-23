@@ -35,7 +35,7 @@ export const addPatientSchema = object({
     gender: z.nativeEnum(GenderEnumType),
 
     dateOfBirth: z.optional(
-      z.date({
+      z.coerce.date({
         required_error: "dateOfBirth is required",
       })
     ),
@@ -64,9 +64,7 @@ export const addPatientSchema = object({
     parentsIllnessDescription: z.optional(string()),
 
     plan: z.optional(
-      string({
-        required_error: "Please confirm your password",
-      })
+      string()
     ),
     //
     //
@@ -88,7 +86,7 @@ export const loginUserSchema = object({
 });
 
 export type CreateUserInput = Omit<
-  TypeOf<typeof addPatientSchema>["body"],
+  z.infer<typeof addPatientSchema>["body"],
   "passwordConfirm"
 >;
 

@@ -2,6 +2,7 @@ import express from "express";
 import {
   changeUserPasswordHandler,
   getMeHandler,
+  loadMessagesHandler,
   sendDailyReportHandler,
 } from "../controllers/user.controller";
 import { deserializeUser } from "../middleware/deserializeMiddlware";
@@ -20,6 +21,7 @@ router.post(
   validate(changePasswordUserSchema),
   changeUserPasswordHandler
 );
+router.get("/loadMessages", loadMessagesHandler)
 router.post("/sendDailyReport", sendDailyReportHandler);
 
 export default router;

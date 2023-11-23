@@ -11,6 +11,9 @@ import userRouter from "./routes/user.routes";
 import docorRouter from "./routes/doctor.routes";
 import validateEnv from "./utils/validateEnv";
 import redisClient from "./utils/connectRedis";
+import { IJoinRoom } from "./interfaces/socket.interfaces";
+
+const { Server } = require("socket.io");
 
 AppDataSource.initialize()
   .then(async () => {
@@ -50,7 +53,7 @@ AppDataSource.initialize()
       const message = await redisClient.get("try");
 
       res.status(200).json({
-        status:200,
+        status: 200,
         message,
       });
     });
@@ -74,7 +77,35 @@ AppDataSource.initialize()
     );
 
     const port = config.get<number>("port");
-    app.listen(port);
+    const origin = config.get<string>("nextPublicURL");
+
+    // Websocket
+    const http = require("http");
+    const server = http.createServer(app);
+
+    const io = new Server(server, {
+      cors: {
+        origin: origin,
+        methods: ["GET", "POST", "DELETE", "PUT"],
+      },
+    });
+
+    io.on("connection", (socket: any) => {
+      console.log(`User connected with socket.id: ${socket.id}`);
+
+      //instead of any, should be an IJoinRoom interface
+      socket.on("userJoinRoom", (data: IJoinRoom) => {
+        const { roomID } = data;
+        socket.join(roomID);
+        console.log(`User with id ${socket.id} joined room ${roomID}`)
+      });
+
+      socket.on("disconnet", () => {
+        console.log(`User disconnected with id: ${socket.id}`);
+      });
+    });
+
+    server.listen(port);
 
     console.log(`Server started on port: ${port}`);
   })

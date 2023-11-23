@@ -8,9 +8,12 @@ import { Doctor } from "../entities/doctor.entity";
 import AppError from "../utils/appError";
 import { DailyReport } from "../entities/PatientProfile/dailyReport.entity";
 import { dailyReportInput } from "../schemas/user.schema";
+import exp from "constants";
+import { messages } from "../entities/messages.entity";
 
 const userRepository = AppDataSource.getRepository(User);
 const dailyReportRepository = AppDataSource.getRepository(DailyReport);
+const messagesRepository = AppDataSource.getRepository(messages);
 
 export const createUser = async (input: any) => {
   console.log("create user input::\n", input);
@@ -73,4 +76,29 @@ export const createDailyReport = async (input: any, user: User) => {
     user: user,
   });
   return await dailyReportRepository.manager.save(dailyReport);
+};
+
+export const loadMessages = async (userID: string) => {
+  const sentMessages = await messagesRepository.findBy({ senderID: userID });
+
+  const recievedMessages = await messagesRepository.findBy({
+    recieverID: userID,
+  });
+
+  const messages = sentMessages.concat(recievedMessages);
+  // console.log("recieved messages: ", messages);
+  return messages;
+};
+
+export const insertMessage = async (
+  senderID: string,
+  recieverID: string,
+  messageContent: string
+) => {
+  const message = await messagesRepository.manager.create(messages, {
+    senderID: senderID,
+    recieverID: recieverID,
+    messageContent: messageContent,
+  });
+  await messagesRepository.save(message);
 };
