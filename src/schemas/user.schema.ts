@@ -63,9 +63,7 @@ export const addPatientSchema = object({
 
     parentsIllnessDescription: z.optional(string()),
 
-    plan: z.optional(
-      string()
-    ),
+    plan: z.optional(string()),
     //
     //
   }).refine((data) => data.password === data.passwordConfirm, {
@@ -135,6 +133,13 @@ export const dailyReportSchema = object({
     exercises: z.optional(string()),
     breathingSessionDuration: z.optional(string()),
     nightFasting: z.optional(boolean()),
+    meals: z
+      .object({
+        time: string(),
+        type: string(),
+        components: string(),
+      })
+      .array(),
   }),
 });
 

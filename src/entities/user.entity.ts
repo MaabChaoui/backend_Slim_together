@@ -9,6 +9,7 @@ import {
 } from "typeorm";
 import Model, { MaritalStatusEnumType, GenderEnumType } from "./model.entity";
 import { DailyReport } from "./PatientProfile/dailyReport.entity";
+import { Supplements } from "./PatientProfile/supplement.entity";
 
 const bcrypt = require("bcrypt");
 
@@ -70,7 +71,7 @@ export class User extends Model {
     enum: MaritalStatusEnumType,
     default: MaritalStatusEnumType.NOT_MARRIED,
   })
-  maritalStatus: MaritalStatusEnumType.NOT_MARRIED;
+  maritalStatus: MaritalStatusEnumType;
 
   @Column({ nullable: true })
   height: number; //cm, 80 <= height <= 220
@@ -118,9 +119,13 @@ export class User extends Model {
   @OneToMany(() => DailyReport, (dailyReport) => dailyReport.user)
   dailyReports: DailyReport[];
 
+  @OneToMany(() => Supplements, (supplement) => supplement.user)
+  supplements: Array<Supplements>;
+
   toJSON() {
     return { ...this, password: undefined, verified: undefined };
   }
+
   // ? Hash password before saving to database
   @BeforeInsert()
   @BeforeUpdate()

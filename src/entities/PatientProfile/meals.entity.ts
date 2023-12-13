@@ -1,18 +1,29 @@
-import Model from "../model.entity";
-import { Column, Entity } from "typeorm";
+import Model, { MealTypeEnumType } from "../model.entity";
+import { Column, Entity, ManyToOne } from "typeorm";
+import { DailyReport } from "./dailyReport.entity";
 
 //id is inherited from Model
 
 @Entity("meals_")
 export class Meals_ extends Model {
   @Column({
-    name:"time"
+    name: "time",
   })
   time: string;
 
   @Column({
-    name:"components"
+    name: "type",
+    type: "enum",
+    enum: MealTypeEnumType,
+    default: MealTypeEnumType.ADDITIONAL,
   })
-  components: string
+  type: MealTypeEnumType;
+
+  @Column({
+    name: "components",
+  })
+  components: string;
+
+  @ManyToOne((type) => DailyReport, (dailyReport) => dailyReport.meals)
+  dailyReport: DailyReport;
 }
- 

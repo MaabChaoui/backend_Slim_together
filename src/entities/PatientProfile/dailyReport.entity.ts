@@ -1,7 +1,8 @@
 import Model from "../model.entity";
-import { Column, Entity, ManyToOne } from "typeorm";
+import { Column, Entity, ManyToOne, OneToMany } from "typeorm";
 import { User } from "../user.entity";
 import { Doctor } from "../doctor.entity";
+import { Meals_ } from "./meals.entity";
 
 //id is inherited from Model
 
@@ -13,29 +14,32 @@ export class DailyReport extends Model {
   wakeUpTime: string;
 
   @Column()
-  sleepTime:string;
+  sleepTime: string;
 
   @Column()
-  screenTime:string;
+  screenTime: string;
 
   @Column()
-  lastScreenTime:string;
+  lastScreenTime: string;
 
   @Column()
-  stepCount:string;
+  stepCount: string;
 
   @Column()
-  exerciseDuration:string;
+  exerciseDuration: string;
 
   @Column()
-  exercises:string;
+  exercises: string;
 
   @Column()
-  breathingSessionDuration:string;
+  breathingSessionDuration: string;
 
   @Column()
-  nightFasting:string;
+  nightFasting: string;
 
   @ManyToOne((type) => User, (user) => user.dailyReports)
   user: User;
+
+  @OneToMany((type) => Meals_, (meal) => meal.dailyReport, { cascade: true })
+  meals: Meals_[];
 }

@@ -1,3 +1,5 @@
+import { MealTypeEnumType } from "../entities/model.entity";
+
 export interface ILoginRequest {
   email: string;
   password: string;
@@ -22,4 +24,18 @@ export interface IAddPatient {
   //parents illnesses? (diabetes/heart/etc..)
   moreParentIlnesses?: string;
   //extras:
+}
+
+export interface ILoadMessages {
+  roomID: string;
+}
+
+export interface IAddSupplements {
+  names: string[];
+}
+
+export interface IMeal {
+  time: string;
+  type: MealTypeEnumType;
+  components: string;
 }

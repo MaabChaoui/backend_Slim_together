@@ -11,7 +11,8 @@ import userRouter from "./routes/user.routes";
 import docorRouter from "./routes/doctor.routes";
 import validateEnv from "./utils/validateEnv";
 import redisClient from "./utils/connectRedis";
-import { IJoinRoom } from "./interfaces/socket.interfaces";
+import { IJoinRoom, ISendMessage } from "./interfaces/socket.interfaces";
+import { insertMessage } from "./services/user.service";
 
 const { Server } = require("socket.io");
 
@@ -64,7 +65,7 @@ AppDataSource.initialize()
     });
 
     // GLOBAL ERROR HANDLER
-    app.use(
+    /* app.use(
       (error: AppError, req: Request, res: Response, next: NextFunction) => {
         error.status = error.status || "error";
         error.statusCode = error.statusCode || 500;
@@ -74,7 +75,7 @@ AppDataSource.initialize()
           message: error.message,
         });
       }
-    );
+    ); */
 
     const port = config.get<number>("port");
     const origin = config.get<string>("nextPublicURL");
@@ -93,11 +94,42 @@ AppDataSource.initialize()
     io.on("connection", (socket: any) => {
       console.log(`User connected with socket.id: ${socket.id}`);
 
-      //instead of any, should be an IJoinRoom interface
       socket.on("userJoinRoom", (data: IJoinRoom) => {
         const { roomID } = data;
         socket.join(roomID);
-        console.log(`User with id ${socket.id} joined room ${roomID}`)
+        console.log(`User with id ${socket.id} joined room ${roomID}`);
+      });
+
+      socket.on("userSendsMessage", async (data: ISendMessage) => {
+        console.log("userSendsMessage: ", data);
+        
+        // insert message into db
+          const insertedMessage = await insertMessage(
+            data.roomID,
+            "doctor",
+            data.messageContent
+          );
+  
+          console.log("insert message returned: ", insertedMessage);
+          
+        // send message to room
+        socket.to(data.roomID).emit("receiveMessage", insertedMessage);
+      });
+
+      socket.on("doctorSendsMessage", async (data: ISendMessage) => {
+        console.log("userSendsMessage: ", data);
+        
+        // insert message into db
+          const insertedMessage = await insertMessage(
+            "doctor",
+            data.roomID,
+            data.messageContent
+          );
+  
+          console.log("inserting doctor-sent message returned: ", insertedMessage);
+          
+        // send message to room
+        socket.to(data.roomID).emit("receiveMessage", insertedMessage);
       });
 
       socket.on("disconnet", () => {

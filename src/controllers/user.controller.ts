@@ -6,10 +6,14 @@ import {
 import { User } from "../entities/user.entity";
 import AppError from "../utils/appError";
 import {
+  addSupplements,
   createDailyReport,
-  loadMessages,
+  createMeals,
+  getSupplements,
+  loadUserMessages,
   updateUserPassword,
 } from "../services/user.service";
+import { IAddSupplements, IMeal } from "../interfaces/requests.interfaces";
 
 export const getMeHandler = async (
   req: Request,
@@ -82,10 +86,12 @@ export const sendDailyReportHandler = async (
     exercises,
     breathingSessionDuration,
     nightFasting,
+    meals,
   } = req.body;
 
   try {
     const user = res.locals.user;
+    // first we create the DailyReport
     const dr = await createDailyReport(
       {
         wakeUpTime,
@@ -100,8 +106,13 @@ export const sendDailyReportHandler = async (
       },
       user
     );
+    
+    // Second, we create the meals
+    const mealsArray = createMeals(meals as IMeal[], dr);
 
+    console.log("created meals: ");
     //console.log("daily report:",dr)
+
     res.json({
       status: 200,
       message: "successfully add daily report",
@@ -111,11 +122,40 @@ export const sendDailyReportHandler = async (
   }
 };
 
-export const loadMessagesHandler = async (
+export const loadUserMessagesHandler = async (
   req: Request,
   res: Response,
   next: NextFunction
 ) => {
-  const messages = await loadMessages(res.locals.user.id)
-  res.status(200).json(messages)
+  const messages = await loadUserMessages(res.locals.user.id);
+  res.status(200).json({
+    status: 200,
+    data: messages,
+  });
+};
+
+export const getSupplementsController = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
+  const userSupplements = await getSupplements(res.locals.user);
+
+  res.status(200).json({
+    status: 200,
+    data: userSupplements,
+  });
+};
+
+export const addSupplementController = async (
+  req: Request<{}, {}, IAddSupplements>,
+  res: Response,
+  next: NextFunction
+) => {
+  await addSupplements(req.body.names, res.locals.user);
+
+  res.status(200).json({
+    status: 200,
+    data: "done",
+  });
 };

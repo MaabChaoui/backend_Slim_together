@@ -10,9 +10,11 @@ import {
   findDoctor,
   findDoctorByEmail,
   findDoctorById,
+  loadDoctorMessages,
   updateDoctorPassword,
 } from "../services/doctor.service";
 import config from "config";
+import { ILoadMessages } from "../interfaces/requests.interfaces";
 
 export const getMyPatientsHandler = async (
   req: Request,
@@ -73,10 +75,24 @@ export const getDoctorHandler = async (
 
     res.status(201).json({
       data: { doctor },
-      status: "fuck",
+      status: 201,
     });
   } catch (err: any) {
     // ????
     return next(new AppError(400, err.message));
   }
+};
+
+export const loadDoctorMessagesHandler = async (
+  req: Request<{}, {}, ILoadMessages>,
+  res: Response,
+  next: NextFunction
+) => {
+  const messages = await loadDoctorMessages(req.body.roomID);
+  console.log("loadDoctorMessagesHandler: ", messages)
+  res.status(200).json({
+    status: 200,
+    data: messages,
+  });
+  next();
 };

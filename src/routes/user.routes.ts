@@ -1,8 +1,10 @@
 import express from "express";
 import {
+  addSupplementController,
   changeUserPasswordHandler,
   getMeHandler,
-  loadMessagesHandler,
+  getSupplementsController,
+  loadUserMessagesHandler,
   sendDailyReportHandler,
 } from "../controllers/user.controller";
 import { deserializeUser } from "../middleware/deserializeMiddlware";
@@ -21,7 +23,10 @@ router.post(
   validate(changePasswordUserSchema),
   changeUserPasswordHandler
 );
-router.get("/loadMessages", loadMessagesHandler)
+router.get("/loadMessages", loadUserMessagesHandler);
 router.post("/sendDailyReport", sendDailyReportHandler);
+
+router.post("/getSupplements", getSupplementsController);
+router.post("/addSupplements", addSupplementController);
 
 export default router;
