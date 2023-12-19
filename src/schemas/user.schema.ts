@@ -1,8 +1,9 @@
-import { boolean, object, string, TypeOf, z } from "zod";
+import { boolean, object, set, string, TypeOf, z } from "zod";
 import {
   GenderEnumType,
   MaritalStatusEnumType,
 } from "../entities/model.entity";
+import { str } from "envalid";
 
 export const addPatientSchema = object({
   body: object({
@@ -121,6 +122,8 @@ export type changePasswordUserInput = Omit<
       exercises,
       breathingSessionDuration,
       nightFasting,
+      meals[], 
+      supplementsRecord[]
  */
 export const dailyReportSchema = object({
   body: object({
@@ -128,9 +131,9 @@ export const dailyReportSchema = object({
     sleepTime: z.optional(string()),
     screenTime: z.optional(string()),
     lastScreenTime: z.optional(string()),
-    stepCount: z.optional(string()),
-    exerciseDuration: z.optional(string()),
-    exercises: z.optional(string()),
+    //stepCount: z.optional(string()),
+    //exerciseDuration: z.optional(string()),
+    //exercises: z.optional(string()),
     breathingSessionDuration: z.optional(string()),
     nightFasting: z.optional(boolean()),
     meals: z
@@ -138,6 +141,16 @@ export const dailyReportSchema = object({
         time: string(),
         type: string(),
         components: string(),
+      })
+      .array(),
+    supplements: z
+      .object({
+        id: string(),
+        created_at: z.date(),
+        updated_at: z.date(),
+        name: string(),
+        taken: z.boolean(),
+        time: string(),
       })
       .array(),
   }),

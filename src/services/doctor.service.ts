@@ -45,7 +45,7 @@ export const updateDoctorPassword = async (id:string, newPassword: string) => {
 
 export const loadDoctorMessages = async (userID: string) => {
   const sentMessages = await messagesRepository.findBy({ senderID: userID });
-  console.log("sent messages: ", sentMessages);
+  // console.log("sent messages: ", sentMessages);
 
   const recievedMessages = await messagesRepository.findBy({
     recieverID: userID,

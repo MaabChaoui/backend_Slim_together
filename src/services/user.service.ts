@@ -10,16 +10,21 @@ import { DailyReport } from "../entities/PatientProfile/dailyReport.entity";
 import { dailyReportInput } from "../schemas/user.schema";
 import exp from "constants";
 import { messages } from "../entities/messages.entity";
-import { Supplements } from "../entities/PatientProfile/supplement.entity";
+import { Supplements } from "../entities/supplement.entity";
 import { DataSource } from "typeorm";
-import { IMeal } from "../interfaces/requests.interfaces";
+import { IMeal, ISupplementRecord } from "../interfaces/requests.interfaces";
 import { Meals_ } from "../entities/PatientProfile/meals.entity";
+import RecordSupplements from "../entities/recordSupplement.entity";
+import { record } from "zod";
+import { MealTypeEnumType } from "../entities/model.entity";
 
 const userRepository = AppDataSource.getRepository(User);
 const dailyReportRepository = AppDataSource.getRepository(DailyReport);
 const messagesRepository = AppDataSource.getRepository(messages);
 const supplementsRepository = AppDataSource.getRepository(Supplements);
 const mealsRepository = AppDataSource.getRepository(Meals_);
+const recordSupplementRepository =
+  AppDataSource.getRepository(RecordSupplements);
 
 export const createUser = async (input: any) => {
   console.log("create user input::\n", input);
@@ -86,7 +91,7 @@ export const createDailyReport = async (input: any, user: User) => {
 
 export const loadUserMessages = async (userID: string) => {
   const sentMessages = await messagesRepository.findBy({ senderID: userID });
-  console.log("sent messages: ", sentMessages);
+  // console.log("sent messages: ", sentMessages);
 
   const recievedMessages = await messagesRepository.findBy({
     recieverID: userID,
@@ -135,9 +140,12 @@ export const addSupplements = async (supplements: string[], user: User) => {
   }
 };
 
-export const createMeals = (meals: IMeal[], dr: DailyReport) => {
-  const mealsArray: Array<Meals_> = [];
+export const createMeals = async (meals: IMeal[], dr: DailyReport) => {
+  let mealsArray: Array<Meals_>= [];
   meals.forEach(async (meal) => {
+    console.log("running createMeals:");
+    console.log("\tcurrent meal:", meal);
+
     const ml = new Meals_();
     ml.time = meal.time;
     ml.type = meal.type;
@@ -146,4 +154,51 @@ export const createMeals = (meals: IMeal[], dr: DailyReport) => {
     mealsArray.push(await mealsRepository.manager.save(ml));
   });
   return mealsArray;
+  /* const meal = meals[0];
+  console.log("meal: ", meal);
+  const ml = new Meals_();
+  ml.time = meal.time;
+  ml.type = meal.type;
+  ml.components = meal.components;
+  ml.dailyReport = dr;
+
+  return await mealsRepository.manager.save(ml); */
+};
+
+export const createSupplementsRecord = async (
+  supplementsRecords: ISupplementRecord[],
+  dr: DailyReport
+) => {
+  let rsArray: Array<RecordSupplements> = [];
+  supplementsRecords.forEach(async (sr) => {
+    const record = new RecordSupplements();
+    record.dailyReport = dr;
+    record.taken = sr.taken;
+    record.time = sr.time;
+    record.supplement = (await findSupplementByID(sr.id)) ?? new Supplements();
+    /*
+    const supp = (await findSupplementByID(sr.id)) ?? new Supplements();
+    const record = await recordSupplementRepository.manager.create(
+      RecordSupplements,
+      {
+        taken: sr.taken,
+        time: sr.time,
+        supplement: supp,
+        dailyReport: dr,
+      }
+    );
+      */
+    let temp = await recordSupplementRepository.manager.save(record);
+    console.log("inserted supplement record: ", temp);
+    rsArray.push(temp);
+  });
+  return rsArray;
+};
+
+export const findSupplementByID = async (id: string) => {
+  return await supplementsRepository.findOne({
+    where: {
+      id: id,
+    },
+  });
 };

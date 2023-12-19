@@ -9,6 +9,7 @@ import {
   addSupplements,
   createDailyReport,
   createMeals,
+  createSupplementsRecord,
   getSupplements,
   loadUserMessages,
   updateUserPassword,
@@ -81,12 +82,10 @@ export const sendDailyReportHandler = async (
     sleepTime,
     screenTime,
     lastScreenTime,
-    stepCount,
-    exerciseDuration,
-    exercises,
     breathingSessionDuration,
     nightFasting,
     meals,
+    supplements,
   } = req.body;
 
   try {
@@ -98,24 +97,30 @@ export const sendDailyReportHandler = async (
         sleepTime,
         screenTime,
         lastScreenTime,
-        stepCount,
+        /* stepCount,
         exerciseDuration,
-        exercises,
+        exercises, */
         breathingSessionDuration,
         nightFasting,
       },
       user
     );
-    
-    // Second, we create the meals
-    const mealsArray = createMeals(meals as IMeal[], dr);
+    console.log("daily report:", dr);
 
-    console.log("created meals: ");
-    //console.log("daily report:",dr)
+    // Second, we create the meals
+    const mealsArray = await createMeals(meals as IMeal[], dr);
+    console.log("created meals: ", mealsArray);
+
+    // Third, insert SupplementRecords:
+    // should've been called supplementsRecords instead of supplements,
+    // TODO: refactor
+    //const supplementsRecord = await createSupplementsRecord(supplements, dr);
+    //console.log("created supplement records: ", supplementsRecord);
 
     res.json({
       status: 200,
       message: "successfully add daily report",
+      dr: dr,
     });
   } catch (err: any) {
     next(new AppError(err.status, err.message));

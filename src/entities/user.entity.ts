@@ -9,7 +9,7 @@ import {
 } from "typeorm";
 import Model, { MaritalStatusEnumType, GenderEnumType } from "./model.entity";
 import { DailyReport } from "./PatientProfile/dailyReport.entity";
-import { Supplements } from "./PatientProfile/supplement.entity";
+import { Supplements } from "./supplement.entity";
 
 const bcrypt = require("bcrypt");
 
@@ -63,7 +63,7 @@ export class User extends Model {
     enum: GenderEnumType,
     default: GenderEnumType.CHOOSE_GENDER,
   })
-  gender: GenderEnumType.CHOOSE_GENDER;
+  gender: GenderEnumType;
 
   @Column({
     name: "maritalstatus",

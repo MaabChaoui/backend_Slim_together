@@ -39,3 +39,15 @@ export interface IMeal {
   type: MealTypeEnumType;
   components: string;
 }
+
+export interface ISupplement {
+  id: string;
+  created_at: Date;
+  updated_at: Date;
+  name: string;
+}
+
+export interface ISupplementRecord extends ISupplement {
+  taken: Boolean;
+  time: string;
+}
