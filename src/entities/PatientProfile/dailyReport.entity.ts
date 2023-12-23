@@ -32,16 +32,20 @@ export class DailyReport extends Model {
   @Column()
   exercises: string;
  */
+
   @Column()
   breathingSessionDuration: string;
 
   @Column()
   nightFasting: string;
 
-  @ManyToOne((type) => User, (user) => user.dailyReports)
+  @ManyToOne((type) => User, (user) => user.dailyReports, {
+    cascade: true, // Enable cascade operations
+    onDelete: "CASCADE", // Ensure deletion cascades to related meals
+  })
   user: User;
 
-  @OneToMany((type) => Meals_, (meal) => meal.dailyReport, { cascade: true })
+  @OneToMany((type) => Meals_, (meal) => meal.dailyReport)
   meals: Meals_[];
 
   @OneToMany((type) => RecordSupplements, (rc) => rc.dailyReport)

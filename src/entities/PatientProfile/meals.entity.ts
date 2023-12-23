@@ -24,6 +24,9 @@ export class Meals_ extends Model {
   })
   components: string;
 
-  @ManyToOne((type) => DailyReport, (dailyReport) => dailyReport.meals)
+  @ManyToOne((type) => DailyReport, (dailyReport) => dailyReport.meals, {
+    cascade: true, // Enable cascade operations
+    onDelete: "CASCADE", // Ensure deletion cascades to related meals
+  })
   dailyReport: DailyReport;
 }

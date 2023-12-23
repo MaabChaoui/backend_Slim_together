@@ -10,6 +10,7 @@ import {
   createDailyReport,
   createMeals,
   createSupplementsRecord,
+  findDailyReportsById,
   getSupplements,
   loadUserMessages,
   updateUserPassword,
@@ -91,6 +92,12 @@ export const sendDailyReportHandler = async (
   try {
     const user = res.locals.user;
     // first we create the DailyReport
+    console.log(
+      "wakeUpTime: ",
+      wakeUpTime,
+      " typeof wakeUpTime: ",
+      typeof wakeUpTime
+    );
     const dr = await createDailyReport(
       {
         wakeUpTime,
@@ -113,7 +120,7 @@ export const sendDailyReportHandler = async (
 
     // Third, insert SupplementRecords:
     // should've been called supplementsRecords instead of supplements,
-    // TODO: refactor
+    // TODO: implement
     //const supplementsRecord = await createSupplementsRecord(supplements, dr);
     //console.log("created supplement records: ", supplementsRecord);
 
@@ -161,6 +168,31 @@ export const addSupplementController = async (
 
   res.status(200).json({
     status: 200,
-    data: "done",
+    data: `added supplements: ${req.body.names}`,
   });
+};
+
+export const getDailyReportsController = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
+  try {
+    const reports = await findDailyReportsById(res.locals.id);
+    reports.sort(
+      (a, b) =>
+        new Date(b.created_at).getTime() - new Date(a.created_at).getTime()
+    );
+
+    console.log("returning reports: ", reports);
+    res.status(200).json({
+      status: 200,
+      data: reports,
+    });
+  } catch (error: any) {
+    return res.status(500).json({
+      status: 500,
+      message: `error fetching daily reports: ${error.message} `,
+    });
+  }
 };

@@ -5,7 +5,10 @@ import { Supplements } from "./supplement.entity";
 
 @Entity("recordsupplements")
 export default class RecordSupplements extends Model {
-  @ManyToOne((type) => DailyReport, (dr: DailyReport) => dr.recordSupplements)
+  @ManyToOne((type) => DailyReport, (dr: DailyReport) => dr.recordSupplements, {
+    cascade: true, // Enable cascade operations
+    onDelete: "CASCADE", // Ensure deletion cascades to related meals
+  })
   dailyReport: DailyReport;
 
   @OneToOne((type) => Supplements, (supp) => supp.record)

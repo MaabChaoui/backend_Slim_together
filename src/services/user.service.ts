@@ -141,7 +141,7 @@ export const addSupplements = async (supplements: string[], user: User) => {
 };
 
 export const createMeals = async (meals: IMeal[], dr: DailyReport) => {
-  let mealsArray: Array<Meals_>= [];
+  let mealsArray: Array<Meals_> = [];
   meals.forEach(async (meal) => {
     console.log("running createMeals:");
     console.log("\tcurrent meal:", meal);
@@ -176,18 +176,7 @@ export const createSupplementsRecord = async (
     record.taken = sr.taken;
     record.time = sr.time;
     record.supplement = (await findSupplementByID(sr.id)) ?? new Supplements();
-    /*
-    const supp = (await findSupplementByID(sr.id)) ?? new Supplements();
-    const record = await recordSupplementRepository.manager.create(
-      RecordSupplements,
-      {
-        taken: sr.taken,
-        time: sr.time,
-        supplement: supp,
-        dailyReport: dr,
-      }
-    );
-      */
+
     let temp = await recordSupplementRepository.manager.save(record);
     console.log("inserted supplement record: ", temp);
     rsArray.push(temp);
@@ -199,6 +188,19 @@ export const findSupplementByID = async (id: string) => {
   return await supplementsRepository.findOne({
     where: {
       id: id,
+    },
+  });
+};
+
+export const findDailyReportsById = async (id: string) => {
+  return await dailyReportRepository.find({
+    where: {
+      id: id,
+    },
+    relations: {
+      user: true,
+      meals: true,
+      recordSupplements: true,
     },
   });
 };
