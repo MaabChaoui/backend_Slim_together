@@ -13,4 +13,6 @@ export default {
   refreshTokenPrivateKey: "JWT_REFRESH_TOKEN_PRIVATE_KEY",
   refreshTokenPublicKey: "JWT_REFRESH_TOKEN_PUBLIC_KEY",
   doctorEmail: "DOCTOR_EMAIL",
+  redisHost: "REDIS_HOST",
+  redisPort: "REDIS_PORT",
 };
