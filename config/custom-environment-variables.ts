@@ -7,6 +7,11 @@ export default {
     password: "POSTGRES_PASSWORD",
     database: "POSTGRES_DB",
   },
+  redisConfig: {
+    url: "REDIS_URL",
+    password: "REDIS_PASSWORD",
+    username: "REDIS_USER"
+  },
   nextPublicURL: "NEXT_PUBLIC_URL",
   accessTokenPrivateKey: "JWT_ACCESS_TOKEN_PRIVATE_KEY",
   accessTokenPublicKey: "JWT_ACCESS_TOKEN_PUBLIC_KEY",

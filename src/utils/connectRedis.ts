@@ -3,12 +3,13 @@ import "reflect-metadata";
 import { createClient } from "redis";
 import config from "config";
 
-const redisUrl = `${config.get<string>("redisHost")}:${config.get<number>(
-  "redisPort"
-)}`;
-const redisClient = createClient({
-  url: redisUrl,
-});
+const redisClient = createClient(
+  config.get<{
+    url: string;
+    password: string;
+    username: string;
+  }>("redisConfig")
+);
 
 const connectRedis = async () => {
   try {
