@@ -39,7 +39,8 @@ AppDataSource.initialize()
     // 4. Cors
     app.use(
       cors({
-        origin: config.get<string>("origin"),
+        // origin: config.get<string>("origin"),
+        origin: "*",
         credentials: true,
       })
     );
@@ -86,7 +87,8 @@ AppDataSource.initialize()
 
     const io = new Server(server, {
       cors: {
-        origin: origin,
+        // origin: origin,
+        origin: "*",
         methods: ["GET", "POST", "DELETE", "PUT"],
       },
     });
