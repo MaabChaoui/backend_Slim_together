@@ -39,8 +39,8 @@ AppDataSource.initialize()
     // 4. Cors
     app.use(
       cors({
-        // origin: config.get<string>("origin"),
-        origin: "*",
+        origin: config.get<string>("nextPublicURL"),
+        // origin: "*",
         credentials: true,
       })
     );
@@ -66,7 +66,7 @@ AppDataSource.initialize()
     });
 
     // GLOBAL ERROR HANDLER
-    /* app.use(
+    app.use(
       (error: AppError, req: Request, res: Response, next: NextFunction) => {
         error.status = error.status || "error";
         error.statusCode = error.statusCode || 500;
@@ -76,7 +76,7 @@ AppDataSource.initialize()
           message: error.message,
         });
       }
-    ); */
+    );
 
     const port = config.get<number>("port");
     const origin = config.get<string>("nextPublicURL");
@@ -87,8 +87,8 @@ AppDataSource.initialize()
 
     const io = new Server(server, {
       cors: {
-        // origin: origin,
-        origin: "*",
+        origin: origin,
+        // origin: "*",
         methods: ["GET", "POST", "DELETE", "PUT"],
       },
     });
@@ -104,32 +104,35 @@ AppDataSource.initialize()
 
       socket.on("userSendsMessage", async (data: ISendMessage) => {
         console.log("userSendsMessage: ", data);
-        
+
         // insert message into db
-          const insertedMessage = await insertMessage(
-            data.roomID,
-            "doctor",
-            data.messageContent
-          );
-  
-          console.log("insert message returned: ", insertedMessage);
-          
+        const insertedMessage = await insertMessage(
+          data.roomID,
+          "doctor",
+          data.messageContent
+        );
+
+        console.log("insert message returned: ", insertedMessage);
+
         // send message to room
         socket.to(data.roomID).emit("receiveMessage", insertedMessage);
       });
 
       socket.on("doctorSendsMessage", async (data: ISendMessage) => {
         console.log("userSendsMessage: ", data);
-        
+
         // insert message into db
-          const insertedMessage = await insertMessage(
-            "doctor",
-            data.roomID,
-            data.messageContent
-          );
-  
-          console.log("inserting doctor-sent message returned: ", insertedMessage);
-          
+        const insertedMessage = await insertMessage(
+          "doctor",
+          data.roomID,
+          data.messageContent
+        );
+
+        console.log(
+          "inserting doctor-sent message returned: ",
+          insertedMessage
+        );
+
         // send message to room
         socket.to(data.roomID).emit("receiveMessage", insertedMessage);
       });
