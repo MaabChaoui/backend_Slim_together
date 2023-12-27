@@ -19,7 +19,8 @@ import { Doctor } from "../entities/doctor.entity";
 const cookiesOptions: CookieOptions = {
   //temp false
   httpOnly: false,
-  sameSite: "lax",
+  secure:true,
+  sameSite: "none",
 };
 
 if (process.env.NODE_ENV === "production") cookiesOptions.secure = true;

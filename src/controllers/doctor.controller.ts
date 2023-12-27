@@ -15,6 +15,7 @@ import {
 } from "../services/doctor.service";
 import config from "config";
 import { ILoadMessages } from "../interfaces/requests.interfaces";
+import { AppDataSource } from "../utils/data-source";
 
 export const getMyPatientsHandler = async (
   req: Request,
@@ -96,3 +97,56 @@ export const loadDoctorMessagesHandler = async (
   });
   next();
 };
+
+export const addDoctorController = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
+  const {
+    fName,
+    lName,
+    email,
+    phone,
+    password,
+    gender,
+    DateOfBirth,
+    bio,
+    address,
+    city,
+    wilaya,
+    postcode,
+    clinicName,
+    clinicAddress,
+  } = req.body;
+
+  try {
+    const doctorRepository = AppDataSource.getRepository(Doctor);
+    const doc = doctorRepository.manager.create(Doctor, {
+      fName,
+      lName,
+      email,
+      phone,
+      password,
+      gender,
+      DateOfBirth,
+      bio,
+      address,
+      city,
+      wilaya,
+      postcode,
+      clinicName,
+      clinicAddress,
+    });
+    await doctorRepository.save(doc);
+
+    res.status(200).json({
+      status: 200,
+      data: "way doctor added! ",
+      doctor: doc,
+    });
+  } catch (error: any) {
+    res.status(500).json({ error: error });
+  }
+};
+

@@ -39,7 +39,8 @@ AppDataSource.initialize()
     // 4. Cors
     app.use(
       cors({
-        origin: config.get<string>("nextPublicURL"),
+        // origin: config.get<string>("nextPublicURL"),
+        origin: "https://react-frontend-slim-together.vercel.app",
         // origin: "*",
         credentials: true,
       })

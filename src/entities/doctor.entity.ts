@@ -47,7 +47,7 @@ export class Doctor extends Model {
     enum: GenderEnumType,
     default: GenderEnumType.CHOOSE_GENDER,
   })
-  gender: GenderEnumType.CHOOSE_GENDER;
+  gender: GenderEnumType;
 
   @Column({
     name: "dateofbirth",
@@ -85,10 +85,10 @@ export class Doctor extends Model {
   @OneToMany(() => Specializations, (sp) => sp.doctor)
   specializations: Specializations[];
 
-  @Column({ name: "clinicname" })
+  @Column({ name: "clinicname", nullable: true })
   clinicName: string;
 
-  @Column({ name: "clinicaddress" })
+  @Column({ name: "clinicaddress", nullable: true })
   clinicAddress: string;
 
   toJSON() {
