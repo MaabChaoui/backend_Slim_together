@@ -37,11 +37,12 @@ AppDataSource.initialize()
     app.use(cookieParser());
 
     // 4. Cors
+    console.log(config.get<string>("nextPublicURL"));
     app.use(
       cors({
         // origin: config.get<string>("nextPublicURL"),
-        origin: "https://react-frontend-slim-together.vercel.app",
-        // origin: "*",
+        //origin: "https://react-frontend-slim-together.vercel.app",
+        origin: "*",
         credentials: true,
       })
     );
@@ -51,6 +52,10 @@ AppDataSource.initialize()
     app.use("/api/users", userRouter);
     app.use("/api/doctor", docorRouter);
 
+    app.post("/", (req: Request, res: Response, next: NextFunction) => {
+      const zal = req.body;
+      console.log(zal)
+    })
     // HEALTH CHECKER
     app.get("/api/healthChecker", async (_, res: Response) => {
       const message = await redisClient.get("try");
